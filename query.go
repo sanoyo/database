@@ -69,6 +69,8 @@ type lexer func(string, cursor) (*token, cursor, bool)
 func lex(source string) ([]*token, error) {
 	tokens := []*token{}
 	cur := cursor{}
+	fmt.Println("source", source)
+	fmt.Println(cur.pointer < uint(len(source)))
 
 lex:
 	for cur.pointer < uint(len(source)) {
@@ -77,20 +79,27 @@ lex:
 			if token, newCursor, ok := l(source, cur); ok {
 				cur = newCursor
 
+				fmt.Println("token", token)
+				fmt.Println("newCursor", newCursor)
+
 				// Omit nil tokens for valid, but empty syntax like newlines
 				if token != nil {
 					tokens = append(tokens, token)
 				}
 
+				fmt.Println("tokens", tokens)
+
 				continue lex
 			}
 		}
+
+		fmt.Println("tokens", tokens)
 
 		hint := ""
 		if len(tokens) > 0 {
 			hint = " after " + tokens[len(tokens)-1].value
 		}
-		return nil, fmt.Errorf("Unable to lex token%s, at %d:%d", hint, cur.loc.line, cur.loc.col)
+		return nil, fmt.Errorf("unable to lex token%s, at %d:%d", hint, cur.loc.line, cur.loc.col)
 	}
 
 	return tokens, nil
@@ -235,10 +244,10 @@ func lexSymbol(source string, ic cursor) (*token, cursor, bool) {
 	// Syntax that should be kept
 	symbols := []symbol{
 		commaSymbol,
-		// leftParenSymbol,
-		// rightParenSymbol,
 		semicolonSymbol,
 		asteriskSymbol,
+		leftparenSymbol,
+		rightparenSymbol,
 	}
 
 	var options []string
@@ -485,7 +494,7 @@ func Parse(source string) (*Ast, error) {
 		stmt, newCursor, ok := parseStatement(tokens, cursor, tokenFromSymbol(semicolonSymbol))
 		if !ok {
 			helpMessage(tokens, cursor, "Expected statement")
-			return nil, errors.New("Failed to parse, expected statement")
+			return nil, errors.New("failed to parse, expected statement")
 		}
 		cursor = newCursor
 
@@ -499,7 +508,7 @@ func Parse(source string) (*Ast, error) {
 
 		if !atLeastOneSemicolon {
 			helpMessage(tokens, cursor, "Expected semi-colon delimiter between statements")
-			return nil, errors.New("Missing semi-colon between statements")
+			return nil, errors.New("missing semi-colon between statements")
 		}
 	}
 

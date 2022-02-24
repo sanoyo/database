@@ -20,6 +20,7 @@ func main() {
 		text, err := reader.ReadString('\n')
 		text = strings.Replace(text, "\n", "", -1)
 
+		fmt.Println("text", text)
 		ast, err := database.Parse(text)
 		if err != nil {
 			panic(err)
