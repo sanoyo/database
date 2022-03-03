@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/eatonphil/gosql"
+	gosql "github.com/sanoyo/database"
 )
 
 func main() {
