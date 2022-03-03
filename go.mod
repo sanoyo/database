@@ -1,3 +1,5 @@
-module github.com/sanoyo/database
+module github.com/eatonphil/gosql
 
-go 1.17
+go 1.13
+
+require github.com/stretchr/testify v1.5.1
